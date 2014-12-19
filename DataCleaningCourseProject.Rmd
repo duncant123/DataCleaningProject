@@ -1,0 +1,42 @@
+---
+title: "Data CLeaning Course Project"
+author: "Duncan Turnbull"
+date: "20 December 2014"
+output: html_document
+---
+
+## Overview
+The project requirement is to take raw data and turn it into tidy data. The data is an online zip file and is part of the "Human Activity Recognition Using Smartphones Data Set". It has come from a group of 30 volunteers aged between 19 & 48. The data is the accelerations recorded as they move using a smartphone accelerometer and gyroscope.
+
+## Project Requirements
+You should create one R script called run_analysis.R that does the following. 
+
+1. Merges the training and the test sets to create one data set.
+2. Extracts only the measurements on the mean and standard deviation for each measurement. 
+3. Uses descriptive activity names to name the activities in the data set
+4. Appropriately labels the data set with descriptive variable names. 
+5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+
+### Part 1
+* Download data and unzip
+* load test and training sets
+    + load row and column labels 
+        + clean column and row labels
+        + apply labels
+    + add variable to reflect data type from file
+    + add variable to reflect whether test or train data
+* Merge data 
+
+### Part 2: select std deviation and mean data only
+* Once all data is in one table discard non necessary columns or 
+* could try reading in only required columns or remove straight away
+    + would require an early logical vector of which columns are required.
+    + whats the best way to do this?
+
+### Part 3: Name the activities appropriately
+* Need to define all included activities - walk, run, upstairs etc, these are the rows
+
+### Part 4
+* Label variable names (columns)
+
+### Part 5 
