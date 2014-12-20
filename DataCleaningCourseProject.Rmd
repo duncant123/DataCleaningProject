@@ -61,22 +61,23 @@ The file names reflect the data types and the directories they are in also split
 2.  Read files
 
 ```{r eval=FALSE}
-activitylabels <- read.table(file = "./Documents/R Programming/R - Data Cleaning/data/UCI HAR Dataset/features.txt")
+activitylabels <- read.table(file = "features.txt")
 # Get the required activity columns
 actcols <- grep("(mean|std)\\(\\)",activitylabels$V2)
 activitylabels[,2] <- gsub(activitylabels[,2],pattern = "[-(),]", replacement = ""  )
 
-ytrain <- read.table(file = "./Documents/R Programming/R - Data Cleaning/data/UCI HAR Dataset/train//y_train.txt")
-ytest <- read.table(file = "./Documents/R Programming/R - Data Cleaning/data/UCI HAR Dataset/test/y_test.txt")
+ytrain <- read.table(file = "./train//y_train.txt")
+ytest <- read.table(file = "./test/y_test.txt")
 activity <- rbind(ytest,ytrain)
-actlabels  <- read.table(file = "./Documents/R Programming/R - Data Cleaning/data/UCI HAR Dataset/activity_labels.txt")
+actlabels  <- read.table(file = "./activity_labels.txt")
 activitynames <- as.character(actlabels$V2)[activity$V1]
 
-testsubject <- read.table(file = "./Documents/R Programming/R - Data Cleaning/data/UCI HAR Dataset/test//subject_test.txt")
-trainsubject <- read.table(file = "./Documents/R Programming/R - Data Cleaning/data/UCI HAR Dataset/train//subject_train.txt")
+testsubject <- read.table(file = "./test//subject_test.txt")
+trainsubject <- read.table(file = ".//train//subject_train.txt")
 subject <- rbind(testsubject, trainsubject)
 
-xtest <- read.table(file = "./Documents/R Programming/R - Data Cleaning/data/UCI HAR Dataset/test/X_test.txt")
+xtest <- read.table(file = "./test/X_test.txt")
+features <- read.table(file = "./features.txt")
 colnames(xtest) <- features$V2
 xtest$type="test"
 xtrain <- read.table(file = "./Documents/R Programming/R - Data Cleaning/data/UCI HAR Dataset/train//X_train.txt")
