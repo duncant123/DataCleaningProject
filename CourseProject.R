@@ -47,4 +47,6 @@ collabels$V2[grep("std|mean", collabels$V2)]
 # Need to get measurements on mean & sd of data
 # So can discard everything tht doesn't have mean and std in them
 
+
+
 setwd(cd)

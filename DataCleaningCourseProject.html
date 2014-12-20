@@ -79,16 +79,142 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <li>Download data and unzip</li>
 <li>load test and training sets
 <ul>
-<li>load row and column labels</li>
-<li>clean column and row labels
+<li>load row and column labels
 <ul>
+<li>get subset of labels that is mean and std before cleaning</li>
+<li>clean column and row labels</li>
 <li>apply labels</li>
-<li>add variable to reflect data type from file</li>
+</ul></li>
 <li>add variable to reflect whether test or train data</li>
 </ul></li>
-</ul></li>
-<li>select std deviation and mean data only</li>
+<li>Merge data</li>
 </ul>
+</div>
+<div id="part-2-select-std-deviation-and-mean-data-only" class="section level3">
+<h3>Part 2: select std deviation and mean data only</h3>
+<ul>
+<li>Once all data is in one table discard non necessary columns or</li>
+<li>could try reading in only required columns or remove straight away
+<ul>
+<li>would require an early logical vector of which columns are required.</li>
+<li>whats the best way to do this?</li>
+<li>looking for mean() and std() - could get caught by meanfreq() if dont use ()</li>
+</ul></li>
+</ul>
+</div>
+<div id="part-3-name-the-activities-appropriately" class="section level3">
+<h3>Part 3: Name the activities appropriately</h3>
+<ul>
+<li>Need to define all included activities - walk, run, upstairs etc, these are the rows</li>
+<li>Add column called ActivityName which links from activity.txt</li>
+</ul>
+</div>
+<div id="part-4" class="section level3">
+<h3>Part 4</h3>
+<ul>
+<li>Label variable names (columns)</li>
+</ul>
+</div>
+<div id="part-5" class="section level3">
+<h3>Part 5</h3>
+<ul>
+<li>create a second, independent tidy data set with the average of each variable for each activity and each subject.</li>
+</ul>
+</div>
+</div>
+<div id="overview-1" class="section level2">
+<h2>Overview</h2>
+<p>There are a range of files that need to be merged. The observations are raw data, there is a user file linking the user ids to the rows</p>
+<p>The file names reflect the data types and the directories they are in also split between the test and train group</p>
+<div id="part-1-1" class="section level3">
+<h3>Part 1</h3>
+<ol start="0" style="list-style-type: decimal">
+<li>Setup parameters
+<ul>
+<li>Setup directories to access data folder</li>
+<li>Assumptions:
+<ul>
+<li>we are starting in the working dir</li>
+<li>we know specific files names and mapping to directories</li>
+</ul></li>
+</ul></li>
+<li>Read labels and clean them
+<ul>
+<li>Move to “UCI HAR Dataset” dir. This is the base directory</li>
+<li>read the files “activity_labels.txt” ,“features.txt”.
+<ul>
+<li>these are needed to label rows and set column variable name</li>
+</ul></li>
+<li>Read the label files ( and clean them if needed )</li>
+<li>Read the files into data tables and add vars for test/train (although it doesn’t look like we need this anywhere)</li>
+<li>apply the label from the files to the data</li>
+</ul></li>
+<li>Read files</li>
+</ol>
+<pre class="r"><code>activitylabels &lt;- read.table(file = &quot;activity_labels.txt&quot;)
+# Get the required activity columns
+features &lt;- read.table(file = &quot;./features.txt&quot;)
+wantedcols &lt;- grep(&quot;(mean|std)\\(\\)&quot;,features$V2)
+featurelabels &lt;- gsub(features[,2],pattern = &quot;[-(),]&quot;, replacement = &quot;&quot;  )
+
+ytrain &lt;- read.table(file = &quot;./train//y_train.txt&quot;)
+ytest &lt;- read.table(file = &quot;./test/y_test.txt&quot;)
+activity &lt;- rbind(ytest,ytrain)
+
+activitynames &lt;- as.character(activitylabels$V2)[activity$V1]
+
+testsubject &lt;- read.table(file = &quot;./test//subject_test.txt&quot;)
+trainsubject &lt;- read.table(file = &quot;.//train//subject_train.txt&quot;)
+subject &lt;- rbind(testsubject, trainsubject)
+
+# Get the big test set of data
+xtest &lt;- read.table(file = &quot;./test/X_test.txt&quot;)
+# Set the names for the test data
+colnames(xtest) &lt;- features$V2
+# Get the big train set of data
+xtrain &lt;- read.table(file = &quot;./train/X_train.txt&quot;)
+# Set the names for the train data
+colnames(xtrain) &lt;- features$V2
+# Repeat the type variable type to show this is train data
+
+# Add a variable type to show whether test or train data
+type &lt;- character(nrow(xtest)+nrow(xtrain))
+type[1:nrow(xtest)] &lt;- &quot;Test&quot;
+type[nrow(xtest)+1:nrow(xtrain)] &lt;- &quot;Train&quot;
+
+# Create the big set of data
+data &lt;- rbind(xtest,xtrain)
+# Capture the current names of the data
+names &lt;- names(data)
+# Join the data with the subject, activity and activity name ( for easier reading)
+data &lt;- cbind(subject,activity,activitynames,type,data)
+# Update the names
+colnames(data) &lt;-c(&quot;Subject&quot;,&quot;Activity&quot;,&quot;ActivityName&quot;,&quot;Type&quot;, as.character(names))
+
+# Use previously selected active columns to remove anything but mean or std
+data2 &lt;-data[,c(1:4,actcols+4)]
+
+# Clean the variable names
+names2 &lt;-names(data2)
+names2 &lt;- gsub(names2,pattern = &quot;[-(),]&quot;, replacement = &quot;&quot;  )
+names(data2) &lt;- names2</code></pre>
+</div>
+<div id="this-gets-us-to-part-4-merged-3-parts-together-back-there" class="section level3">
+<h3>This gets us to Part 4 ( merged 3 parts together back there)</h3>
+<p>Now we need to create a second independent data set with average of each variable for each activity and each subject: * This seems like a good call to use dplyr group_by function to group by activity and subject and summarise to process everything * What is needed is to group by activity and within that subject then create the average for each variable (column) * The new data will have 6 activities X 30 subject = 180 rows and 66 averages per row</p>
+<pre><code>library(dplyr)
+#group_by()
+
+#Get names of columns (vars) we need to average.
+avgCols &lt;- names(data2)
+# Remove first 4 description names
+avgCols &lt;- avgCols[5:length(avgCols)]
+
+tidy &lt;- group_by(data2, ActivityName, Subject)
+tidyoutput &lt;-summarise_each(tbl = tidy, funs(mean), c(-Type,-Activity))
+
+# Write out the tidy data
+write.table( tidyoutput, using row.name=FALSE ,file = &quot;./tidyoutput.txt&quot;)</code></pre>
 </div>
 </div>
 

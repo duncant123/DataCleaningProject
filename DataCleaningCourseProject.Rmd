@@ -21,9 +21,9 @@ You should create one R script called run_analysis.R that does the following.
 * Download data and unzip
 * load test and training sets
     + load row and column labels 
+        + get subset of labels that is mean and std before cleaning
         + clean column and row labels
         + apply labels
-    + add variable to reflect data type from file
     + add variable to reflect whether test or train data
 * Merge data 
 
@@ -32,9 +32,11 @@ You should create one R script called run_analysis.R that does the following.
 * could try reading in only required columns or remove straight away
     + would require an early logical vector of which columns are required.
     + whats the best way to do this?
+    + looking for mean() and std() - could get caught by meanfreq() if dont use ()
 
 ### Part 3: Name the activities appropriately
 * Need to define all included activities - walk, run, upstairs etc, these are the rows
+* Add column called ActivityName which links from activity.txt
 
 ### Part 4
 * Label variable names (columns)
@@ -42,52 +44,96 @@ You should create one R script called run_analysis.R that does the following.
 ### Part 5 
 * create a second, independent tidy data set with the average of each variable for each activity and each subject.
 
-# Overview
+## Overview
 There are a range of files that need to be merged. The observations are raw data, there is a user file linking the user ids to the rows
 
 The file names reflect the data types and the directories they are in also split between the test and train group
 
-## Part 1
+### Part 1
 0. Setup parameters
     * Setup directories to access data folder
-    * Get specific files mapping to directories
+    * Assumptions:
+        * we are starting in the working dir 
+        * we know specific files names and mapping to directories
 1. Read labels and clean them
-    * Move to "UCI HAR Dataset" dir
-    * read the files "activity_labels.txt" ,"features.txt"
+    * Move to "UCI HAR Dataset" dir. This is the base directory
+    * read the files "activity_labels.txt" ,"features.txt". 
+        * these are needed to label rows and set column variable name
     * Read the label files ( and clean them if needed )
-    * Read the files into data tables and add vars for test/train bod/gyro/tot
-    * label the files
-    * add 
+    * Read the files into data tables and add vars for test/train (although it doesn't look like we need this anywhere)
+    * apply the label from the files to the data
+    
 2.  Read files
 
 ```{r eval=FALSE}
-activitylabels <- read.table(file = "features.txt")
+activitylabels <- read.table(file = "activity_labels.txt")
 # Get the required activity columns
-actcols <- grep("(mean|std)\\(\\)",activitylabels$V2)
-activitylabels[,2] <- gsub(activitylabels[,2],pattern = "[-(),]", replacement = ""  )
+features <- read.table(file = "./features.txt")
+wantedcols <- grep("(mean|std)\\(\\)",features$V2)
+featurelabels <- gsub(features[,2],pattern = "[-(),]", replacement = ""  )
 
 ytrain <- read.table(file = "./train//y_train.txt")
 ytest <- read.table(file = "./test/y_test.txt")
 activity <- rbind(ytest,ytrain)
-actlabels  <- read.table(file = "./activity_labels.txt")
-activitynames <- as.character(actlabels$V2)[activity$V1]
+
+activitynames <- as.character(activitylabels$V2)[activity$V1]
 
 testsubject <- read.table(file = "./test//subject_test.txt")
 trainsubject <- read.table(file = ".//train//subject_train.txt")
 subject <- rbind(testsubject, trainsubject)
 
+# Get the big test set of data
 xtest <- read.table(file = "./test/X_test.txt")
-features <- read.table(file = "./features.txt")
+# Set the names for the test data
 colnames(xtest) <- features$V2
-xtest$type="test"
-xtrain <- read.table(file = "./Documents/R Programming/R - Data Cleaning/data/UCI HAR Dataset/train//X_train.txt")
+# Get the big train set of data
+xtrain <- read.table(file = "./train/X_train.txt")
+# Set the names for the train data
 colnames(xtrain) <- features$V2
-xtrain$type="train"
+# Repeat the type variable type to show this is train data
+
+# Add a variable type to show whether test or train data
+type <- character(nrow(xtest)+nrow(xtrain))
+type[1:nrow(xtest)] <- "Test"
+type[nrow(xtest)+1:nrow(xtrain)] <- "Train"
+
+# Create the big set of data
 data <- rbind(xtest,xtrain)
+# Capture the current names of the data
 names <- names(data)
-data <- cbind(subject,activity,activitynames,data)
-colnames(data) <-c("Subject","Activity","ActivityName", as.character(names))
+# Join the data with the subject, activity and activity name ( for easier reading)
+data <- cbind(subject,activity,activitynames,type,data)
+# Update the names
+colnames(data) <-c("Subject","Activity","ActivityName","Type", as.character(names))
 
 # Use previously selected active columns to remove anything but mean or std
 data2 <-data[,c(1:4,actcols+4)]
+
+# Clean the variable names
+names2 <-names(data2)
+names2 <- gsub(names2,pattern = "[-(),]", replacement = ""  )
+names(data2) <- names2
+```
+
+### This gets us to Part 4 ( merged 3 parts together back there)
+
+Now we need to create a second independent data set with average of each variable for each activity and each subject:
+* This seems like a good call to use dplyr group_by function to group by activity and subject and summarise to process everything
+* What is needed is to group by activity and within that subject then create the average for each variable (column) 
+* The new data will have 6 activities X 30 subject = 180 rows and 66 averages per row
+
+```{}
+library(dplyr)
+#group_by()
+
+#Get names of columns (vars) we need to average.
+avgCols <- names(data2)
+# Remove first 4 description names
+avgCols <- avgCols[5:length(avgCols)]
+
+tidy <- group_by(data2, ActivityName, Subject)
+tidyoutput <-summarise_each(tbl = tidy, funs(mean), c(-Type,-Activity))
+
+# Write out the tidy data
+write.table( tidyoutput, using row.name=FALSE ,file = "./tidyoutput.txt")
 ```
