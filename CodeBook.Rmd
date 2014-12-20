@@ -2,7 +2,7 @@
 title: "Codebook"
 author: "Duncan Turnbull"
 date: "Sunday, December 21, 2014"
-output: html_document
+output: pdf_document
 ---
 
 #CodeBook
@@ -48,6 +48,7 @@ Every other variable in the output is an **average** of the measurements for the
 
 The variable names are made up of representative info as follows:
 
+* These base measurements observed (before summarisation) were normalised and bounded within [-1,1].
 * The observation summary is either time or frequency. This is represented with the first letter: t or f 
 * The end of the name will be std or mean then X,Y,Z or blank. 
     * The X Y or Z letter represents the direction the signal reported.
