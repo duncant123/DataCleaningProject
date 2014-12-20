@@ -1,0 +1,47 @@
+---
+title: "Codebook"
+author: "Duncan Turnbull"
+date: "Saturday, December 20, 2014"
+output: html_document
+---
+
+Activities are transformed from IDs into Names
+## tidyoutput variables
+The output columns are:
+```R
+ [1] "ActivityName"             "Subject"                  "tBodyAccmeanX"            "tBodyAccmeanY"           
+ [5] "tBodyAccmeanZ"            "tBodyAccstdX"             "tBodyAccstdY"             "tBodyAccstdZ"            
+ [9] "tGravityAccmeanX"         "tGravityAccmeanY"         "tGravityAccmeanZ"         "tGravityAccstdX"         
+[13] "tGravityAccstdY"          "tGravityAccstdZ"          "tBodyAccJerkmeanX"        "tBodyAccJerkmeanY"       
+[17] "tBodyAccJerkmeanZ"        "tBodyAccJerkstdX"         "tBodyAccJerkstdY"         "tBodyAccJerkstdZ"        
+[21] "tBodyGyromeanX"           "tBodyGyromeanY"           "tBodyGyromeanZ"           "tBodyGyrostdX"           
+[25] "tBodyGyrostdY"            "tBodyGyrostdZ"            "tBodyGyroJerkmeanX"       "tBodyGyroJerkmeanY"      
+[29] "tBodyGyroJerkmeanZ"       "tBodyGyroJerkstdX"        "tBodyGyroJerkstdY"        "tBodyGyroJerkstdZ"       
+[33] "tBodyAccMagmean"          "tBodyAccMagstd"           "tGravityAccMagmean"       "tGravityAccMagstd"       
+[37] "tBodyAccJerkMagmean"      "tBodyAccJerkMagstd"       "tBodyGyroMagmean"         "tBodyGyroMagstd"         
+[41] "tBodyGyroJerkMagmean"     "tBodyGyroJerkMagstd"      "fBodyAccmeanX"            "fBodyAccmeanY"           
+[45] "fBodyAccmeanZ"            "fBodyAccstdX"             "fBodyAccstdY"             "fBodyAccstdZ"            
+[49] "fBodyAccJerkmeanX"        "fBodyAccJerkmeanY"        "fBodyAccJerkmeanZ"        "fBodyAccJerkstdX"        
+[53] "fBodyAccJerkstdY"         "fBodyAccJerkstdZ"         "fBodyGyromeanX"           "fBodyGyromeanY"          
+[57] "fBodyGyromeanZ"           "fBodyGyrostdX"            "fBodyGyrostdY"            "fBodyGyrostdZ"           
+[61] "fBodyAccMagmean"          "fBodyAccMagstd"           "fBodyBodyAccJerkMagmean"  "fBodyBodyAccJerkMagstd"  
+[65] "fBodyBodyGyroMagmean"     "fBodyBodyGyroMagstd"      "fBodyBodyGyroJerkMagmean" "fBodyBodyGyroJerkMagstd"
+```
+###Explanations 
+**ActivityName**: These are the names of the activities the subjects were completing during the observation
+    - WALKING
+    - WALKING_UPSTAIRS
+    - WALKING_DOWNSTAIRS
+    - SITTING
+    - STANDING
+    - LAYING
+
+**Subject**: This is the numeric id of the subject from whom the measurements were taken. Value range 1-30
+
+Every other variable in the output is an average of the measurements for that subject and that activity. 
+
+The variable names are made up of representative info as follows:
+
+* There are three measurements X,Y,Z for different accelerations. The variable type is either time or a frequency  based which is represented with the first letter: t or f 
+* The end of the name will be std or mean then X,Y,Z or blank. The X Y or Z letter represents the direction the signal reported.
+* The label between this represents the type of sensor, body or gyroscope, acceleration e.g. tGravityAccstdZ will show the average of the standard deviation of a time variable of Gravity Acceleration in the Z direction for the respective subject carrying out the respective activity

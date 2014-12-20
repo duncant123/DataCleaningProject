@@ -1,8 +1,9 @@
 ---
-title: "Data CLeaning Course Project"
+File: README.rmd
+title: "Data Cleaning Course Project "
 author: "Duncan Turnbull"
 date: "20 December 2014"
-output: html_document
+output: pdf_document
 ---
 
 ## Overview
@@ -118,22 +119,39 @@ names(data2) <- names2
 ### This gets us to Part 4 ( merged 3 parts together back there)
 
 Now we need to create a second independent data set with average of each variable for each activity and each subject:
+
 * This seems like a good call to use dplyr group_by function to group by activity and subject and summarise to process everything
 * What is needed is to group by activity and within that subject then create the average for each variable (column) 
 * The new data will have 6 activities X 30 subject = 180 rows and 66 averages per row
 
-```{}
+```{r eval =FALSE}
 library(dplyr)
-#group_by()
-
-#Get names of columns (vars) we need to average.
-avgCols <- names(data2)
-# Remove first 4 description names
-avgCols <- avgCols[5:length(avgCols)]
 
 tidy <- group_by(data2, ActivityName, Subject)
 tidyoutput <-summarise_each(tbl = tidy, funs(mean), c(-Type,-Activity))
 
 # Write out the tidy data
-write.table( tidyoutput, using row.name=FALSE ,file = "./tidyoutput.txt")
+write.table( tidyoutput, row.name=FALSE ,file = "./tidyoutput.txt")
+
 ```
+
+# How to read the output file back in 
+To read the file back in use:
+```{r eval=FALSE}
+View( read.table(file="tidyoutput.txt", header=T) )
+```
+
+## Tidy data
+This output is tidy. 
+
+* One observation per row
+* One variable per column
+* The observational units form a table
+
+Other clean up included:
+* Cleaned variable names of non alpha characters "(),_"
+* Only selection of required columns 
+
+### References:
+* https://class.coursera.org/getdata-016/forum/thread?thread_id=100
+* http://vita.had.co.nz/papers/tidy-data.pdf
