@@ -2,7 +2,7 @@
 File: README.rmd
 title: "Data Cleaning Course Project "
 author: "Duncan Turnbull"
-date: "20 December 2014"
+date: "21 December 2014"
 output: pdf_document
 ---
 
@@ -151,6 +151,22 @@ This output is tidy.
 Other clean up included:
 * Cleaned variable names of non alpha characters "(),_"
 * Only selection of required columns 
+
+## Creating the codebook
+
+```{r eval=FALSE}
+codebook <- data.frame(codes,timefreq= "", measure ="",direction = "", stringsAsFactors = FALSE)
+codebook$timefreq[c(grep(codebook$codes, pattern = "^t"))] <- "t"
+codebook$timefreq[c(grep(codebook$codes, pattern = "^f"))] <- "f"
+codebook$direction[c(grep(codebook$codes, pattern = "X$"))] <- "x"
+codebook$direction[c(grep(codebook$codes, pattern = "Y$"))] <- "y"
+codebook$direction[c(grep(codebook$codes, pattern = "Z$"))] <- "z"
+codebook$measure[c(grep(codebook$codes, pattern = "mean"))] <- "mean"
+codebook$measure[c(grep(codebook$codes, pattern = "std"))] <- "std"
+codebook$feature <- gsub("^[tf](.*)(mean|std)|","\\1",codebook$codes)
+codebook$feature <- gsub( pattern = "(.*)[XYZ]$","\\1" ,codebook$feature)
+write.table( codebook, row.name=FALSE ,file = "./codebook.txt")
+```
 
 ### References:
 * https://class.coursera.org/getdata-016/forum/thread?thread_id=100

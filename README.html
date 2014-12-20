@@ -124,6 +124,14 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </div>
 <div id="functional-overview" class="section level2">
 <h2>Functional Overview</h2>
+<div id="assumptions" class="section level3">
+<h3>Assumptions</h3>
+<p>The script assumes it is called from the “UCI HAR Dataset” directory. All its references to files are in this directory. The tidyoutput.txt will be stored in this directory.</p>
+<p>In my setup this is what I use to check I am in the correct directory before calling the script.</p>
+<pre class="R"><code>&gt; getwd()
+[1] &quot;E:/Users/duncan/R Programming/R DataCleaning/Data Cleaning Project/data/UCI HAR Dataset&quot;
+&gt; source('E:/Users/duncan/R Programming/R DataCleaning/Data Cleaning Project/DataCleaningProject/run_analysis.R')</code></pre>
+</div>
 <div id="input-files" class="section level3">
 <h3>Input Files</h3>
 <p>There are a range of files that need to be merged. They come from a Zip file. When the file is expanded out it creates a directory “UCI HAR Dataset” which contains the data files.</p>
@@ -163,7 +171,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </div>
 <div id="output-files" class="section level3">
 <h3>Output files</h3>
-<p>The script creates one output file “tidyoutput.txt” in the main working directory</p>
+<p>The script creates one output file “tidyoutput.txt” in the directory it was called from</p>
 </div>
 <div id="the-other-files" class="section level3">
 <h3>The other files</h3>
@@ -188,7 +196,6 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </ul></li>
 <li>Read labels and clean them
 <ul>
-<li>Move to “UCI HAR Dataset” dir. This is the base directory</li>
 <li>read the files “activity_labels.txt” ,“features.txt”.
 <ul>
 <li>these are needed to label rows and set column variable name</li>
@@ -261,6 +268,7 @@ tidyoutput &lt;-summarise_each(tbl = tidy, funs(mean), c(-Type,-Activity))</code
 <h2>Howto read the output file back in</h2>
 <p>To see the file you can use:</p>
 <pre class="R"><code>View( read.table(file=&quot;tidyoutput.txt&quot;, header=T) )</code></pre>
+<p>Note: the script will attempt to do this at the end anyway</p>
 </div>
 <div id="tidy-data" class="section level2">
 <h2>Tidy data</h2>

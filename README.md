@@ -1,10 +1,10 @@
 ---
 title: "README.md"
-subject: "Data Cleaning Course Project"
 author: "Duncan Turnbull"
-date: "20 December 2014"
-output: html_document
-File: README.rmd
+date: "21 December 2014"
+output: pdf_document
+subject: Data Cleaning Course Project
+File: README.md
 ---
 
 ## Overview
@@ -47,6 +47,17 @@ You should create one R script called run_analysis.R that does the following.
 * create a second, independent tidy data set with the average of each variable for each activity and each subject.
 
 ## Functional Overview
+
+### Assumptions
+The script assumes it is called from the "UCI HAR Dataset" directory. All its references to files are in this directory. The tidyoutput.txt will be stored in this directory.
+
+In my setup this is what I use to check I am in the correct directory before calling the script. 
+```R
+> getwd()
+[1] "E:/Users/duncan/R Programming/R DataCleaning/Data Cleaning Project/data/UCI HAR Dataset"
+> source('E:/Users/duncan/R Programming/R DataCleaning/Data Cleaning Project/DataCleaningProject/run_analysis.R')
+````
+
 ### Input Files
 There are a range of files that need to be merged. They come from a Zip file. When the file is expanded out it creates a directory "UCI HAR Dataset" which contains the data files.
 
@@ -73,7 +84,7 @@ There are a range of files that need to be merged. They come from a Zip file. Wh
 * The "test/Inertial Signals" and "train/Inertial Signals"" folders are **NOT** referenced in this script
 
 ### Output files
-The script creates one output file "tidyoutput.txt" in the main working directory
+The script creates one output file "tidyoutput.txt" in the directory it was called from
 
 
 ### The other files
@@ -90,7 +101,6 @@ The other files used are:
         * we are starting in the working dir 
         * we know specific files names and mapping to directories
 1. Read labels and clean them
-    * Move to "UCI HAR Dataset" dir. This is the base directory
     * read the files "activity_labels.txt" ,"features.txt". 
         * these are needed to label rows and set column variable name
     * Read the label files ( and clean them if needed )
@@ -199,6 +209,7 @@ To see the file you can use:
 ```R
 View( read.table(file="tidyoutput.txt", header=T) )
 ```
+Note: the script will attempt to do this at the end anyway
 
 ## Tidy data
 This output is tidy. 
